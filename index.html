@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 World Capitals Quiz - Fun & Educational!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .question-section {
+            margin: 30px 0;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            color: #333;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+            font-weight: 500;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #4caf50;
+            color: white;
+            animation: pulse 0.5s ease;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #f44336;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+            display: block;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: #e0e0e0;
+            color: #333;
+            padding: 12px 30px;
+        }
+
+        .btn-reset:hover {
+            background: #d0d0d0;
+        }
+
+        .results {
+            text-align: center;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .results h2 {
+            font-size: 2em;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .results p {
+            font-size: 1.1em;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+
+        .stats {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .question-text {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Quiz Section -->
+        <div id="quizSection">
+            <div class="header">
+                <h1>🌍 World Capitals Quiz</h1>
+                <p>Test your geography knowledge!</p>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="question-number" id="questionNumber"></div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-next" id="nextBtn" disabled>Next Question →</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results">
+            <h2>Quiz Complete! 🎉</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="emoji" id="emoji"></div>
+            <p id="resultMessage"></p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Correct Answers:</span>
+                    <span class="stat-value" id="correctCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Accuracy:</span>
+                    <span class="stat-value" id="accuracy">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Time Taken:</span>
+                    <span class="stat-value" id="timeTaken">0s</span>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-reset" id="resetBtn">🔄 Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["London", "Paris", "Berlin", "Madrid"],
+                correct: 1,
+                fun_fact: "Paris is known as the 'City of Light' and has been a center of culture for centuries!"
+            },
+            {
+                question: "Which city is the capital of Japan?",
+                options: ["Osaka", "Kyoto", "Tokyo", "Hiroshima"],
+                correct: 2,
+                fun_fact: "Tokyo is one of the most populated metropolitan areas in the world!"
+            },
+            {
+                question: "What is the capital of Brazil?",
+                options: ["Rio de Janeiro", "São Paulo", "Brasília", "Salvador"],
+                correct: 2,
+                fun_fact: "Brasília was specially designed and built as the capital city in 1960!"
+            },
+            {
+                question: "Which city is the capital of Australia?",
+                options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+                correct: 2,
+                fun_fact: "Canberra was built as a compromise between Sydney and Melbourne!"
+            },
+            {
+                question: "What is the capital of Canada?",
+                options: ["Toronto", "Vancouver", "Ottawa", "Montreal"],
+                correct: 2,
+                fun_fact: "Ottawa sits on the Ottawa River and is known for its historic Parliament Hill!"
+            },
+            {
+                question: "Which city is the capital of Germany?",
+                options: ["Munich", "Hamburg", "Berlin", "Frankfurt"],
+                correct: 2,
+                fun_fact: "Berlin is famous for the Brandenburg Gate and its vibrant art scene!"
+            },
+            {
+                question: "What is the capital of India?",
+                options: ["Mumbai", "New Delhi", "Bangalore", "Kolkata"],
+                correct: 1,
+                fun_fact: "New Delhi is a planned city designed by British architect Edwin Lutyens!"
+            },
+            {
+                question: "Which city is the capital of South Africa?",
+                options: ["Johannesburg", "Cape Town", "Pretoria", "Durban"],
+                correct: 2,
+                fun_fact: "South Africa has three capitals - Pretoria (executive), Cape Town (legislative), and Bloemfontein (judicial)!"
+            },
+            {
+                question: "What is the capital of Mexico?",
+                options: ["Cancun", "Mexico City", "Guadalajara", "Monterrey"],
+                correct: 1,
+                fun_fact: "Mexico City is built on an ancient Aztec site and is one of the oldest capital cities in North America!"
+            },
+            {
+                question: "Which city is the capital of Russia?",
+                options: ["St. Petersburg", "Moscow", "Novosibirsk", "Yekaterinburg"],
+                correct: 1,
+                fun_fact: "Moscow has been the capital since 1991 and is the largest city in Europe!"
+            }
+        ];
+
+        // State Variables
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let selectedAnswer = null;
+        let startTime = null;
+        let endTime = null;
+
+        // DOM Elements
+        const quizSection = document.getElementById('quizSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressFill = document.getElementById('progressFill');
+        const questionNumber = document.getElementById('questionNumber');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedback = document.getElementById('feedback');
+
+        // Initialize Quiz
+        function initQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            selectedAnswer = null;
+            startTime = Date.now();
+            endTime = null;
+            quizSection.style.display = 'block';
+            resultsSection.classList.remove('show');
+            loadQuestion();
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            
+            // Update progress
+            const progress = ((currentQuestion) / quizData.length) * 100;
+            progressFill.style.width = progress + '%';
+            
+            // Update question info
+            questionNumber.textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+            questionText.textContent = question.question;
+            
+            // Clear previous state
+            answered = false;
+            selectedAnswer = null;
+            nextBtn.disabled = true;
+            feedback.classList.remove('correct', 'incorrect');
+            feedback.textContent = '';
+            
+            // Load options
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionBtn = document.createElement('div');
+                optionBtn.className = 'option';
+                optionBtn.textContent = option;
+                optionBtn.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionBtn);
+            });
+        }
+
+        // Select Answer
+        function selectAnswer(index) {
+            if (answered) return;
+            
+            const question = quizData[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            selectedAnswer = index;
+            answered = true;
+            
+            // Mark all options
+            options.forEach((opt, i) => {
+                if (i === question.correct) {
+                    opt.classList.add('correct');
+                } else if (i === index && index !== question.correct) {
+                    opt.classList.add('incorrect');
+                }
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // Show feedback
+            if (index === question.correct) {
+                score++;
+                feedback.classList.add('correct');
+                feedback.textContent = `✓ Correct! ${question.fun_fact}`;
+            } else {
+                feedback.classList.add('incorrect');
+                feedback.textContent = `✗ Wrong! The correct answer is ${question.options[question.correct]}`;
+            }
+            
+            nextBtn.disabled = false;
+        }
+
+        // Next Question
+        nextBtn.addEventListener('click', () => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                endTime = Date.now();
+                showResults();
+            }
+        });
+
+        // Show Results
+        function showResults() {
+            quizSection.style.display = 'none';
+            resultsSection.classList.add('show');
+            
+            const percentage = Math.round((score / quizData.length) * 100);
+            const timeTaken = Math.round((endTime - startTime) / 1000);
+            
+            document.getElementById('scoreCircle').textContent = `${percentage}%`;
+            document.getElementById('correctCount').textContent = `${score}/${quizData.length}`;
+            document.getElementById('accuracy').textContent = `${percentage}%`;
+            document.getElementById('timeTaken').textContent = `${timeTaken}s`;
+            
+            // Set emoji and message based on score
+            let emoji = '😢';
+            let message = "Don't worry! Keep practicing!";
+            
+            if (percentage === 100) {
+                emoji = '🏆';
+                message = "Perfect Score! You're a geography expert!";
+            } else if (percentage >= 80) {
+                emoji = '🌟';
+                message = "Excellent! You know your capitals!";
+            } else if (percentage >= 60) {
+                emoji = '😊';
+                message = "Good job! Keep learning!";
+            } else if (percentage >= 40) {
+                emoji = '🤔';
+                message = "Nice try! Study a bit more!";
+            }
+            
+            document.getElementById('emoji').textContent = emoji;
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        // Reset Quiz
+        resetBtn.addEventListener('click', initQuiz);
+
+        // Start Quiz
+        initQuiz();
+    </script>
+</body>
+</html>
